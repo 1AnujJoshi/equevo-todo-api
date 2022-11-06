@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
   return res.status(200).json({
     message: `
     - /signin (send email default@email.com and password as Default@2022 in body through postman)
-    - /question/create (To create a question)`,
+    `,
   });
 });
 // router.use('/question', require('./question'));

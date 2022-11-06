@@ -3,7 +3,7 @@ const db = require("./config/mongoose");
 const port = process.env.PORT || 8000;
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // use express router
 app.use("/", require("./routes"));

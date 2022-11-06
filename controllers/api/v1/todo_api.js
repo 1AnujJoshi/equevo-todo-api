@@ -1,10 +1,14 @@
 const Todo = require("../../../models/todo");
 const User = require("../../../models/user");
 const jwt = require("jsonwebtoken");
+
+// sign In controller
 module.exports.signIn = async function (req, res) {
   try {
     const { email, password } = req.body;
+
     const user = await User.findOne({ email: email }).populate("todos");
+    //if user is not present create one and send token in response
     if (
       !user &&
       req.body.email == "default@email.com" &&
@@ -24,7 +28,6 @@ module.exports.signIn = async function (req, res) {
       // save user token
       user.token = token;
       //Creating jwt token
-
       res.status(201).json({
         success: true,
         message:
@@ -33,6 +36,7 @@ module.exports.signIn = async function (req, res) {
         token: user.token,
       });
     }
+    //if user is present send token in response
     // Create token
     const token = jwt.sign(
       { user_id: user._id, email: req.body.email },
@@ -41,9 +45,8 @@ module.exports.signIn = async function (req, res) {
         expiresIn: "30m",
       }
     );
-    // save user token
+    // save user token and send in response
     user.token = token;
-
     res.status(201).json({
       success: true,
       message:
@@ -60,6 +63,7 @@ module.exports.signIn = async function (req, res) {
   }
 };
 
+//create todo
 module.exports.createTodo = async function (req, res) {
   try {
     const user = await User.findOne({ email: "default@email.com" });
@@ -79,6 +83,7 @@ module.exports.createTodo = async function (req, res) {
   }
 };
 
+// update todo
 module.exports.updateTodo = async function (req, res) {
   try {
     const todo = await Todo.findByIdAndUpdate(
@@ -101,6 +106,7 @@ module.exports.updateTodo = async function (req, res) {
   }
 };
 
+//delete todo
 module.exports.deleteTodo = async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
@@ -118,19 +124,21 @@ module.exports.deleteTodo = async (req, res) => {
   }
 };
 
+//get all the todos in paginated form
 module.exports.getTodos = async function (req, res) {
   try {
     let pageSize = req.query.pageSize || req.body.pageSize || 3;
     let page = req.query.page - 1 || req.body.page - 1 || 0;
     let fromDate = req.body.fromDate || req.query.fromDate;
     let toDate = req.body.toDate || req.query.toDate;
-    const tods = await Todo.find({
+
+    // filter by date and use pagination
+    const todos = await Todo.find({
       createdAt: { $gte: Date(fromDate), $lt: Date(toDate) },
-    });
-    console.log("date todo", tods);
-    const todos = await Todo.find({})
+    })
       .limit(pageSize)
       .skip(pageSize * page);
+
     return res.status(200).json({
       message: "List of Todos",
       todos,
