@@ -54,7 +54,7 @@ module.exports.signIn = async function (req, res) {
     console.log("********", err);
     return res.status(500).json({
       message:
-        "Internal Server Error || check if credentials are as follows:- email- default@email.com password-Default@2022 ",
+        "Internal Server Error || check if credentials are as follows:- email- default@email.com password-Default@2022 and are sent through the body ",
     });
   }
 };
