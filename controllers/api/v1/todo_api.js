@@ -9,11 +9,7 @@ module.exports.signIn = async function (req, res) {
 
     const user = await User.findOne({ email: email }).populate("todos");
     //if user is not present create one and send token in response
-    if (
-      !user &&
-      req.body.email == "default@email.com" &&
-      req.body.password == "Default@2022"
-    ) {
+    if (!user && email == "default@email.com" && password == "Default@2022") {
       const user = await User.create({
         email: email,
         password: password,
@@ -39,7 +35,7 @@ module.exports.signIn = async function (req, res) {
     //if user is present send token in response
     // Create token
     const token = jwt.sign(
-      { user_id: user._id, email: req.body.email },
+      { user_id: user._id, email: email },
       process.env.TOKEN_KEY,
       {
         expiresIn: "30m",
